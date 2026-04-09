@@ -4,7 +4,7 @@ const { generateToken } = require('../utils/jwt');
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
@@ -12,10 +12,14 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const userId = await User.create(name, email, hashedPassword, role);
+    const userId = await User.create(name, email, hashedPassword, 'user');
 
-    const token = generateToken(userId, role || 'user');
-    res.status(201).json({ message: 'User registered successfully', token, userId });
+    const token = generateToken(userId, 'user');
+    res.status(201).json({
+      message: 'User registered successfully',
+      token,
+      user: { id: userId, name, email, role: 'user' }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

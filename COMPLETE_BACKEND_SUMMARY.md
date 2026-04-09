@@ -3,7 +3,7 @@
 ## All Features Implemented
 
 ### 1. Authentication & Authorization
-- User registration with password validation (min 8 chars, uppercase, lowercase, number)
+- User registration with lab-friendly password validation (minimum 4 characters)
 - Login with JWT token generation
 - JWT middleware for protected routes
 - Role-based access control (user/admin)
@@ -64,7 +64,7 @@
 - idx_comments_complaint
 - idx_history_complaint
 
-## API Endpoints (27 Total)
+## API Endpoints (13 Total)
 
 ### Authentication (2)
 - POST /api/auth/register
@@ -109,9 +109,10 @@
 - models/Comment.js
 - models/History.js
 
-### Routes (2)
+### Routes (3)
 - routes/authRoutes.js
 - routes/complaintRoutes.js
+- routes/adminRoutes.js
 
 ### Utils (2)
 - utils/jwt.js
@@ -157,8 +158,8 @@
 ### Registration
 - Name: required
 - Email: valid email format
-- Password: min 8 chars, uppercase, lowercase, number
-- Role: optional, must be 'user' or 'admin'
+- Password: minimum 4 characters
+- Role: always assigned as 'user' during self-registration
 
 ### Login
 - Email: valid email format
@@ -196,12 +197,8 @@
 5. Efficient SQL queries with JOINs
 6. Static file caching
 
-## What's NOT Implemented (Frontend Only)
+## What's NOT Implemented
 
-- React frontend
-- XML validation files (DTD/XSD)
-- Chart.js visualization
-- About and Contact pages
 - Email notifications
 - Real-time WebSocket updates
 
@@ -234,12 +231,8 @@ The backend is production-ready with:
 - Database optimization
 - API documentation
 
-## Next Phase: Frontend
+## Next Improvements
 
-Ready to implement:
-1. React application
-2. Component structure
-3. API integration
-4. State management
-5. Responsive UI
-6. Chart.js analytics
+1. Add automated API tests
+2. Add schema migration/versioning support
+3. Tighten password rules if this moves beyond the lab environment

@@ -6,6 +6,7 @@
 - Register with name, email, password
 - Login with JWT tokens
 - Role-based access (user/admin)
+- Lab password rule: minimum 4 characters
 
 ### 2. Submit Complaint
 **Form Fields:**
@@ -41,7 +42,6 @@
 - By category
 - By status
 - By priority
-- By keyword
 
 ## Database Schema
 
@@ -69,6 +69,26 @@ created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 ```
 
+### complaint_comments
+```sql
+id INT PRIMARY KEY AUTO_INCREMENT
+complaint_id INT FOREIGN KEY
+user_id INT FOREIGN KEY
+comment TEXT NOT NULL
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+```
+
+### complaint_history
+```sql
+id INT PRIMARY KEY AUTO_INCREMENT
+complaint_id INT FOREIGN KEY
+changed_by INT FOREIGN KEY
+field_name VARCHAR(50) NOT NULL
+old_value VARCHAR(255)
+new_value VARCHAR(255)
+changed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+```
+
 ## API Endpoints
 
 ### Auth
@@ -79,6 +99,9 @@ updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 - `POST /api/complaints` - Submit complaint
 - `GET /api/complaints/my` - Get user's complaints
 - `GET /api/complaints/:id` - Get complaint details
+- `POST /api/complaints/:id/comments` - Add comment
+- `GET /api/complaints/:id/comments` - Get comments
+- `GET /api/complaints/:id/history` - Get complaint history
 
 ### Complaints (Admin)
 - `GET /api/admin/complaints` - Get all complaints
@@ -87,7 +110,6 @@ updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 
 ## Tech Stack
 
-**Frontend:** React, HTML, CSS, JavaScript  
 **Backend:** Node.js, Express  
 **Database:** MySQL  
 **Auth:** JWT, bcrypt  
@@ -116,7 +138,7 @@ PORT=3000
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
-DB_NAME=complaint_db
+DB_NAME=feedback_db
 JWT_SECRET=your_secret_key
 JWT_EXPIRES_IN=7d
 ```

@@ -4,7 +4,7 @@
 
 ### Core Features
 - User registration and login with JWT authentication
-- Password validation (min 8 chars, uppercase, lowercase, number)
+- Password validation for lab use (minimum 4 characters)
 - Role-based access control (user/admin)
 - CRUD operations for complaints
 - Image upload support for complaints
@@ -76,11 +76,7 @@ cp .env.example .env
 
 ### 3. Setup Database
 ```bash
-# Already done - database is set up with:
-# - users table
-# - complaints table
-# - complaint_comments table
-# - complaint_history table
+mysql -u root -p < database/schema.sql
 ```
 
 ### 4. Start Server
@@ -100,7 +96,7 @@ Content-Type: application/json
 {
   "name": "Test User",
   "email": "test@example.com",
-  "password": "Test1234"
+  "password": "1234"
 }
 ```
 
@@ -184,7 +180,8 @@ Authorization: Bearer YOUR_TOKEN
 │   └── History.js           # Audit trail model
 ├── routes/
 │   ├── authRoutes.js        # Auth endpoints
-│   └── complaintRoutes.js   # Complaint endpoints
+│   ├── complaintRoutes.js   # User complaint endpoints
+│   └── adminRoutes.js       # Admin endpoints
 ├── utils/
 │   ├── jwt.js               # JWT helpers
 │   └── logger.js            # Winston logger
@@ -219,7 +216,6 @@ Authorization: Bearer YOUR_TOKEN
 
 ## Next Steps
 
-1. Frontend implementation (React)
-2. XML validation files (DTD/XSD)
-3. Chart.js integration for analytics
-4. About and Contact pages
+1. Add API tests for auth, complaint, and admin flows
+2. Add migration/versioning support if schema changes continue
+3. Add stricter production validation if this moves beyond lab scope

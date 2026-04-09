@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const logger = require('./utils/logger');
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -57,4 +59,3 @@ app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
   console.log(`Server running on port ${PORT}`);
 });
-

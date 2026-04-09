@@ -1,18 +1,18 @@
-# Feedback Management System
+# Feedback Management System Backend
 
-A web application for managing complaints and feedback with user and admin roles.
+Backend and database setup for a complaint and feedback management system with user and admin roles.
 
 ## Features
 
 - User registration and login
 - Submit complaints with categories and priorities
-- Track complaint status in real-time
-- Admin dashboard to manage all complaints
-- Search and filter functionality
+- Track complaint status
+- Admin APIs to manage all complaints
+- Comments and audit history
+- Search and filter support for admin views
 
 ## Tech Stack
 
-**Frontend:** HTML, CSS, JavaScript, React  
 **Backend:** Node.js, Express  
 **Database:** MySQL  
 **Auth:** JWT
@@ -23,12 +23,17 @@ A web application for managing complaints and feedback with user and admin roles
 # Install dependencies
 npm install
 
-# Setup database
+# Setup database schema
 mysql -u root -p < database/schema.sql
 
 # Configure environment
 cp .env.example .env
 # Edit .env with your settings
+
+# Optional sample data:
+# 1. Register users with password 1234
+# 2. Then run:
+mysql -u root -p < database/seed.sql
 
 # Start server
 npm start
@@ -37,7 +42,9 @@ npm start
 ## Database Tables
 
 **users:** id, name, email, password, role, created_at  
-**complaints:** id, user_id, title, description, category, priority, status, created_at, updated_at
+**complaints:** id, user_id, title, description, category, priority, status, created_at, updated_at  
+**complaint_comments:** id, complaint_id, user_id, comment, created_at  
+**complaint_history:** id, complaint_id, changed_by, field_name, old_value, new_value, changed_at
 
 ## API Endpoints
 
@@ -62,10 +69,14 @@ npm start
 ## Project Structure
 
 ```
-├── client/          # React frontend
-├── server/          # Express backend
-├── database/        # SQL schema
-└── .env            # Environment config
+├── config/          # MySQL connection pool
+├── controllers/     # Route handlers
+├── database/        # Schema and sample data
+├── middleware/      # Auth, validation, upload
+├── models/          # Database queries
+├── routes/          # Auth, complaint, admin routes
+├── utils/           # JWT and logging helpers
+└── server.js        # Entry point
 ```
 
 For detailed documentation, see `/docs` folder.

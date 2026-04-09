@@ -4,11 +4,7 @@ exports.validateRegister = [
   body('name').trim().notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Valid email is required'),
   body('password')
-    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-    .matches(/[A-Z]/).withMessage('Password must contain uppercase letter')
-    .matches(/[a-z]/).withMessage('Password must contain lowercase letter')
-    .matches(/[0-9]/).withMessage('Password must contain number'),
-  body('role').optional().isIn(['user', 'admin']).withMessage('Invalid role')
+    .isLength({ min: 4 }).withMessage('Password must be at least 4 characters long')
 ];
 
 exports.validateLogin = [

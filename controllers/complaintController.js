@@ -118,6 +118,15 @@ exports.getStats = async (req, res) => {
 
 exports.getHistory = async (req, res) => {
   try {
+    const complaint = await Complaint.findById(req.params.id);
+    if (!complaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+
+    if (complaint.user_id !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
     const history = await History.findByComplaintId(req.params.id);
     res.json({ history });
   } catch (error) {

@@ -1,4 +1,4 @@
-# Backend Setup Complete
+# Backend Setup
 
 ## Quick Start
 
@@ -9,10 +9,7 @@ npm install
 
 ### 2. Setup Database
 ```bash
-# Login to MySQL
-mysql -u root -p
-
-# Run schema
+# Run the full schema
 mysql -u root -p < database/schema.sql
 ```
 
@@ -36,6 +33,27 @@ npm start
 
 Server will run on http://localhost:3000
 
+## Lab Credentials
+
+Use `1234` as the password for test accounts you register through the API.
+
+Suggested accounts:
+- `admin@feedback.com`
+- `john@example.com`
+- `jane@example.com`
+
+After registering `admin@feedback.com`, promote it once in MySQL:
+
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'admin@feedback.com';
+```
+
+To insert sample complaints for the registered users:
+
+```bash
+mysql -u root -p < database/seed.sql
+```
+
 ## API Endpoints
 
 ### Authentication
@@ -48,10 +66,10 @@ Server will run on http://localhost:3000
 - `GET /api/complaints/:id` - Get complaint by ID (requires auth)
 
 ### Admin
-- `GET /api/complaints/admin/all` - Get all complaints (admin only)
-- `GET /api/complaints/admin/stats` - Get statistics (admin only)
-- `PUT /api/complaints/admin/:id` - Update complaint (admin only)
-- `DELETE /api/complaints/admin/:id` - Delete complaint (admin only)
+- `GET /api/admin/complaints` - Get all complaints (admin only)
+- `GET /api/admin/stats` - Get statistics (admin only)
+- `PUT /api/admin/complaints/:id` - Update complaint (admin only)
+- `DELETE /api/admin/complaints/:id` - Delete complaint (admin only)
 
 ## Test with Postman
 
@@ -75,9 +93,14 @@ Content-Type: application/json
 {
   "name": "Admin User",
   "email": "admin@example.com",
-  "password": "1234",
-  "role": "admin"
+  "password": "1234"
 }
+```
+
+Then promote that user in MySQL:
+
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'admin@example.com';
 ```
 
 ### 3. Login
@@ -113,13 +136,13 @@ Authorization: Bearer YOUR_TOKEN_HERE
 
 ### 6. Get All Complaints (Admin)
 ```
-GET http://localhost:3000/api/complaints/admin/all
+GET http://localhost:3000/api/admin/complaints
 Authorization: Bearer ADMIN_TOKEN_HERE
 ```
 
 ### 7. Update Complaint Status (Admin)
 ```
-PUT http://localhost:3000/api/complaints/admin/1
+PUT http://localhost:3000/api/admin/complaints/1
 Authorization: Bearer ADMIN_TOKEN_HERE
 Content-Type: application/json
 
@@ -129,36 +152,9 @@ Content-Type: application/json
 }
 ```
 
-## Project Structure
-
-```
-├── config/
-│   └── database.js          # MySQL connection
-├── controllers/
-│   ├── authController.js    # Auth logic
-│   └── complaintController.js # Complaint logic
-├── middleware/
-│   ├── auth.js              # JWT verification
-│   └── adminAuth.js         # Admin check
-├── models/
-│   ├── User.js              # User model
-│   └── Complaint.js         # Complaint model
-├── routes/
-│   ├── authRoutes.js        # Auth endpoints
-│   └── complaintRoutes.js   # Complaint endpoints
-├── utils/
-│   └── jwt.js               # JWT helpers
-├── database/
-│   └── schema.sql           # Database schema
-├── .env.example             # Environment template
-├── .gitignore
-├── package.json
-└── server.js                # Entry point
-```
-
 ## Next Steps
 
 1. Test all endpoints with Postman
-2. Implement frontend (React)
-3. Add XML validation files
-4. Integrate Chart.js for visualization
+2. Add more admin filters if needed
+3. Add API tests
+4. Add database migration/versioning if the lab scope expands
