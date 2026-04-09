@@ -18,6 +18,7 @@ CREATE TABLE complaints (
     category ENUM('Electrical', 'Network', 'Maintenance', 'Others') NOT NULL,
     priority ENUM('Low', 'Medium', 'High') DEFAULT 'Low',
     status ENUM('Pending', 'In Progress', 'Resolved') DEFAULT 'Pending',
+    image_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -25,3 +26,4 @@ CREATE TABLE complaints (
 
 CREATE INDEX idx_complaints_status ON complaints(status);
 CREATE INDEX idx_complaints_user_id ON complaints(user_id);
+CREATE INDEX idx_complaints_created_at ON complaints(created_at);

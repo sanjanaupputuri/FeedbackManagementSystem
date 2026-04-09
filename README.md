@@ -45,11 +45,19 @@ npm start
 - POST /api/auth/register
 - POST /api/auth/login
 
-**Complaints:**
-- POST /api/complaints - Submit complaint
+**Complaints (User):**
+- POST /api/complaints - Submit complaint (with optional image)
 - GET /api/complaints/my - Get user's complaints
-- GET /api/admin/complaints - Get all complaints (admin)
-- PUT /api/admin/complaints/:id - Update complaint (admin)
+- GET /api/complaints/:id - Get complaint details
+- POST /api/complaints/:id/comments - Add comment
+- GET /api/complaints/:id/comments - Get comments
+- GET /api/complaints/:id/history - Get audit history
+
+**Admin:**
+- GET /api/admin/complaints - Get all complaints (paginated, filterable)
+- GET /api/admin/stats - Get statistics
+- PUT /api/admin/complaints/:id - Update complaint
+- DELETE /api/admin/complaints/:id - Delete complaint
 
 ## Project Structure
 

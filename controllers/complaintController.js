@@ -1,11 +1,13 @@
 const Complaint = require('../models/Complaint');
+const History = require('../models/History');
 
 exports.createComplaint = async (req, res) => {
   try {
     const { title, description, category, priority } = req.body;
     const userId = req.user.id;
+    const imagePath = req.file ? req.file.path : null;
 
-    const complaintId = await Complaint.create(userId, title, description, category, priority || 'Low');
+    const complaintId = await Complaint.create(userId, title, description, category, priority || 'Low', imagePath);
     res.status(201).json({ message: 'Complaint submitted successfully', complaintId });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -40,8 +42,16 @@ exports.getComplaintById = async (req, res) => {
 
 exports.getAllComplaints = async (req, res) => {
   try {
-    const complaints = await Complaint.findAll();
-    res.json({ complaints });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const filters = {
+      status: req.query.status,
+      category: req.query.category,
+      priority: req.query.priority
+    };
+
+    const result = await Complaint.findAllPaginated(page, limit, filters);
+    res.json(result);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -54,6 +64,14 @@ exports.updateComplaint = async (req, res) => {
     
     if (!complaint) {
       return res.status(404).json({ message: 'Complaint not found' });
+    }
+
+    // Log changes to history
+    if (status && status !== complaint.status) {
+      await History.create(req.params.id, req.user.id, 'status', complaint.status, status);
+    }
+    if (priority && priority !== complaint.priority) {
+      await History.create(req.params.id, req.user.id, 'priority', complaint.priority, priority);
     }
 
     await Complaint.update(req.params.id, status || complaint.status, priority || complaint.priority);
@@ -93,6 +111,15 @@ exports.getStats = async (req, res) => {
     });
 
     res.json({ stats: formattedStats });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.getHistory = async (req, res) => {
+  try {
+    const history = await History.findByComplaintId(req.params.id);
+    res.json({ history });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
