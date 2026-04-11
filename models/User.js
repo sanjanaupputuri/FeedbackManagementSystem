@@ -4,7 +4,7 @@ class User {
   static async create(name, email, hashedPassword, role = 'user') {
     const [result] = await db.execute(
       'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-      [name, email, hashedPassword, role]
+      [name, email, hashedPassword || '', role]
     );
     return result.insertId;
   }

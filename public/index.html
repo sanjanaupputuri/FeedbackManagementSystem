@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <nav id="navbar" style="display: none;">
+            <h2>Feedback System</h2>
+            <div>
+                <span id="userInfo"></span>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </nav>
+
+        <div id="authSection">
+            <div class="auth-container">
+                <h1>Feedback Management System</h1>
+                <div class="tabs">
+                    <button class="tab active" id="loginTab">Login</button>
+                    <button class="tab" id="registerTab">Register</button>
+                </div>
+
+                <form id="loginForm">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+
+                <form id="registerForm" style="display: none;">
+                    <input type="text" id="regName" placeholder="Name" required>
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <button type="submit">Register</button>
+                </form>
+                
+                <div style="text-align: center; margin: 1rem 0;">
+                    <p>- OR -</p>
+                    <button id="googleSignInBtn" style="background: #4285f4; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin: 0 auto;">
+                        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z" fill="#EA4335"/><path d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z" fill="#4285F4"/><path d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z" fill="#FBBC05"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z" fill="#34A853"/></svg>
+                        Sign in with Google
+                    </button>
+                </div>
+                
+                <div id="authMessage"></div>
+            </div>
+        </div>
+
+        <div id="mainSection" style="display: none;">
+            <div id="userView">
+                <h2>My Complaints</h2>
+                <button id="newComplaintBtn">New Complaint</button>
+                
+                <div id="complaintForm" style="display: none;">
+                    <h3>Submit Complaint</h3>
+                    <form id="newComplaintForm">
+                        <input type="text" id="title" placeholder="Title" required>
+                        <textarea id="description" placeholder="Description" required></textarea>
+                        <select id="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Service">Service</option>
+                            <option value="Product">Product</option>
+                            <option value="Billing">Billing</option>
+                            <option value="Technical">Technical</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <select id="priority" required>
+                            <option value="">Select Priority</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                        <input type="file" id="image" accept="image/*">
+                        <button type="submit">Submit</button>
+                        <button type="button" id="cancelComplaintBtn">Cancel</button>
+                    </form>
+                </div>
+
+                <div id="complaintsList"></div>
+            </div>
+
+            <div id="adminView" style="display: none;">
+                <h2>Admin Dashboard</h2>
+                <div id="stats"></div>
+                
+                <div class="filters">
+                    <select id="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                    <select id="filterCategory">
+                        <option value="">All Categories</option>
+                        <option value="Service">Service</option>
+                        <option value="Product">Product</option>
+                        <option value="Billing">Billing</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div id="adminComplaintsList"></div>
+            </div>
+        </div>
+
+        <div id="modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" id="closeModalBtn">&times;</span>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
