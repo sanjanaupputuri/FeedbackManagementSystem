@@ -149,13 +149,16 @@ document.getElementById('newComplaintForm').addEventListener('submit', async (e)
         const data = await res.json();
 
         if (res.ok) {
+            alert('Complaint submitted successfully!');
             hideComplaintForm();
             loadMyComplaints();
         } else {
-            alert(data.message || 'Failed to submit complaint');
+            console.error('Error response:', data);
+            alert(data.message || data.errors?.[0]?.msg || 'Failed to submit complaint');
         }
     } catch (err) {
-        alert('Failed to submit complaint');
+        console.error('Submission error:', err);
+        alert('Failed to submit complaint: ' + err.message);
     }
 });
 
