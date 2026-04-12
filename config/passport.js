@@ -13,8 +13,7 @@ passport.use(new GoogleStrategy({
       let user = await User.findByEmail(email);
       
       if (!user) {
-        const userId = await User.create(profile.displayName, email, null, 'user');
-        user = { id: userId, name: profile.displayName, email, role: 'user' };
+        return done(null, false, { message: 'Please register first before using Google login' });
       }
       
       return done(null, user);
