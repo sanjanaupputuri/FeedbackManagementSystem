@@ -1,0 +1,7 @@
+.card-header {
+  border-bottom: 1px solid var(--border);
+}
+
+.bg-light {
+  background: var(--bg-base) !important;
+}

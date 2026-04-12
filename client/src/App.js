@@ -22,6 +22,7 @@ import Contact from './pages/Contact';
 // Components
 import PrivateRoute from './components/auth/PrivateRoute';
 import AdminRoute from './components/auth/AdminRoute';
+import AdminLayout from './components/common/AdminLayout';
 
 function App() {
   return (
@@ -43,11 +44,13 @@ function App() {
             <Route path="/complaints/:id" element={<PrivateRoute><ComplaintDetail /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
 
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-            <Route path="/admin/complaints" element={<AdminRoute><AdminComplaints /></AdminRoute>} />
-            <Route path="/admin/complaints/:id" element={<AdminRoute><AdminComplaintDetail /></AdminRoute>} />
-            <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
+            {/* Admin Routes with Layout */}
+            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="complaints" element={<AdminComplaints />} />
+              <Route path="complaints/:id" element={<AdminComplaintDetail />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+            </Route>
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

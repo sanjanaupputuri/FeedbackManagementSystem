@@ -7,13 +7,17 @@ const {
   createComplaint,
   getMyComplaints,
   getComplaintById,
-  getHistory
+  getHistory,
+  getUserStats,
+  getRecentComplaints
 } = require('../controllers/complaintController');
 const { addComment, getComments } = require('../controllers/commentController');
 
 // User routes
 router.post('/', authMiddleware, upload.single('image'), validateComplaint, handleValidationErrors, createComplaint);
 router.get('/my', authMiddleware, getMyComplaints);
+router.get('/stats', authMiddleware, getUserStats);
+router.get('/recent', authMiddleware, getRecentComplaints);
 router.get('/:id', authMiddleware, getComplaintById);
 router.post('/:id/comments', authMiddleware, addComment);
 router.get('/:id/comments', authMiddleware, getComments);

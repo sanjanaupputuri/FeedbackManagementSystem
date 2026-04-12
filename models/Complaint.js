@@ -82,6 +82,28 @@ class Complaint {
     );
     return rows;
   }
+
+  static async getUserStats(userId) {
+    const [rows] = await db.execute(
+      'SELECT status, COUNT(*) as count FROM complaints WHERE user_id = ? GROUP BY status',
+      [userId]
+    );
+    const stats = { total: 0, Pending: 0, 'In Progress': 0, Resolved: 0 };
+    rows.forEach(row => {
+      stats[row.status] = row.count;
+      stats.total += row.count;
+    });
+    return stats;
+  }
+
+  static async getRecentByUser(userId, limit = 5) {
+    const safeLimit = parseInt(limit) || 5;
+    const [rows] = await db.execute(
+      `SELECT c.*, u.name as user_name FROM complaints c JOIN users u ON c.user_id = u.id WHERE c.user_id = ? ORDER BY c.created_at DESC LIMIT ${safeLimit}`,
+      [userId]
+    );
+    return rows;
+  }
 }
 
 module.exports = Complaint;

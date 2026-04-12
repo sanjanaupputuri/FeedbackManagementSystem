@@ -1,0 +1,31 @@
+.admin-analytics .summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.summary-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.summary-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.info-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.text-warning { color: var(--status-pending); }
+.text-info { color: var(--status-inprogress); }
+.text-success { color: var(--status-resolved); }
+.text-danger { color: var(--priority-high); }

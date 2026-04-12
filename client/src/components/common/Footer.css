@@ -1,0 +1,44 @@
+.footer {
+  margin-top: auto;
+}
+
+.footer h6 {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.footer-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  font-size: 0.875rem;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+}
+
+.footer-social {
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  transition: all var(--transition-fast);
+}
+
+.footer-social:hover {
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 767px) {
+  .footer {
+    text-align: center;
+  }
+  
+  .footer .text-md-start,
+  .footer .text-md-end {
+    text-align: center !important;
+  }
+}

@@ -1,0 +1,38 @@
+.tech-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+}
+
+.tech-item i {
+  font-size: 1.25rem;
+}
+
+.tech-item .text-purple {
+  color: #7C3AED;
+}
+
+.tech-item .text-info {
+  color: #3B82F6;
+}
+
+.category-box {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+}
+
+.category-box i {
+  font-size: 2rem;
+  color: var(--primary);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.category-box span {
+  font-weight: 500;
+}

@@ -1,0 +1,69 @@
+.complaint-card {
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.complaint-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.category-icon {
+  font-size: 1.25rem;
+}
+
+.complaint-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.complaint-title:hover {
+  color: var(--primary);
+}
+
+.complaint-desc {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--status-pending);
+}
+
+.status-in-progress {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--status-inprogress);
+}
+
+.status-resolved {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--status-resolved);
+}
+
+.priority-high {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--priority-high);
+}
+
+.priority-medium {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--priority-medium);
+}
+
+.priority-low {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--priority-low);
+}

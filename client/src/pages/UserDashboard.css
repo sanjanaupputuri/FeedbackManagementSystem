@@ -1,0 +1,61 @@
+.welcome-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid var(--border);
+}
+
+.quick-action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--primary);
+  transition: all var(--transition-fast);
+}
+
+.list-group-item:hover .quick-action-icon {
+  background: var(--primary);
+  color: white;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.card-header {
+  border-bottom: 1px solid var(--border);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.col-12 > .card {
+  animation: fadeInUp 0.4s ease forwards;
+  opacity: 0;
+}
+
+@media (max-width: 767px) {
+  .welcome-banner {
+    text-align: center;
+  }
+  
+  .welcome-banner .col-md-4 {
+    margin-top: 1rem;
+  }
+  
+  .welcome-banner .btn {
+    width: 100%;
+  }
+}

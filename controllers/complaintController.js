@@ -116,6 +116,27 @@ exports.getStats = async (req, res) => {
   }
 };
 
+exports.getUserStats = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const stats = await Complaint.getUserStats(userId);
+    res.json({ stats });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.getRecentComplaints = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const limit = parseInt(req.query.limit) || 5;
+    const complaints = await Complaint.getRecentByUser(userId, limit);
+    res.json({ complaints });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 exports.getHistory = async (req, res) => {
   try {
     const complaint = await Complaint.findById(req.params.id);

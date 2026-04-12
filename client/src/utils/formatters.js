@@ -18,7 +18,7 @@ export const formatDateTime = (dateString) => {
   });
 };
 
-export const getRelativeTime = (dateString) => {
+export const formatRelativeTime = (dateString) => {
   const date = new Date(dateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now - date) / 1000);

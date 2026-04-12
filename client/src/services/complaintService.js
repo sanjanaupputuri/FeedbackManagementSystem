@@ -14,6 +14,16 @@ export const complaintService = {
     return response.data;
   },
 
+  getStats: async () => {
+    const response = await api.get('/complaints/stats');
+    return response.data;
+  },
+
+  getRecent: async (limit = 5) => {
+    const response = await api.get('/complaints/recent', { params: { limit } });
+    return response.data;
+  },
+
   getById: async (id) => {
     const response = await api.get(`/complaints/${id}`);
     return response.data;
