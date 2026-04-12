@@ -12,12 +12,18 @@ exports.authMiddleware = async (req, res, next) => {
     const user = await User.findById(decoded.userId);
     
     if (!user) {
-      return res.status(401).json({ message: 'Invalid token' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
     req.user = { id: user.id, role: user.role };
     next();
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token has expired. Please login again.' });
+    }
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token format' });
+    }
     res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
