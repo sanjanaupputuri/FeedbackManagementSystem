@@ -48,13 +48,15 @@ class Complaint {
     }
 
     const whereSql = ` WHERE ${whereClauses.join(' AND ')}`;
+    const safeLimit = parseInt(limit);
+    const safeOffset = parseInt(offset);
     const dataQuery =
       'SELECT c.*, u.name as user_name, u.email as user_email FROM complaints c JOIN users u ON c.user_id = u.id' +
       whereSql +
-      ` ORDER BY c.created_at DESC LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
+      ' ORDER BY c.created_at DESC LIMIT ? OFFSET ?';
     const countQuery = 'SELECT COUNT(*) as total FROM complaints c' + whereSql;
 
-    const [rows] = await db.execute(dataQuery, params);
+    const [rows] = await db.execute(dataQuery, [...params, safeLimit, safeOffset]);
     const [countResult] = await db.execute(countQuery, params);
     
     return {
@@ -99,8 +101,8 @@ class Complaint {
   static async getRecentByUser(userId, limit = 5) {
     const safeLimit = parseInt(limit) || 5;
     const [rows] = await db.execute(
-      `SELECT c.*, u.name as user_name FROM complaints c JOIN users u ON c.user_id = u.id WHERE c.user_id = ? ORDER BY c.created_at DESC LIMIT ${safeLimit}`,
-      [userId]
+      'SELECT c.*, u.name as user_name FROM complaints c JOIN users u ON c.user_id = u.id WHERE c.user_id = ? ORDER BY c.created_at DESC LIMIT ?',
+      [userId, safeLimit]
     );
     return rows;
   }
