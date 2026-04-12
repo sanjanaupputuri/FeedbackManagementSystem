@@ -51,11 +51,10 @@ class Complaint {
     const dataQuery =
       'SELECT c.*, u.name as user_name, u.email as user_email FROM complaints c JOIN users u ON c.user_id = u.id' +
       whereSql +
-      ' ORDER BY c.created_at DESC LIMIT ? OFFSET ?';
-    const dataParams = [...params, limit, offset];
+      ` ORDER BY c.created_at DESC LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
     const countQuery = 'SELECT COUNT(*) as total FROM complaints c' + whereSql;
 
-    const [rows] = await db.execute(dataQuery, dataParams);
+    const [rows] = await db.execute(dataQuery, params);
     const [countResult] = await db.execute(countQuery, params);
     
     return {

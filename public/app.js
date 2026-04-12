@@ -17,16 +17,11 @@ if (urlParams.has('token')) {
 
 if (urlParams.has('authError')) {
     const email = urlParams.get('email');
-
     window.history.replaceState({}, document.title, '/');
     showRegister();
     showMessage(urlParams.get('authError'), 'error');
-
     if (email) {
-        const registerEmailInput = document.getElementById('regEmail');
-        if (registerEmailInput) {
-            registerEmailInput.value = email;
-        }
+        document.getElementById('regEmail').value = email;
     }
 }
 
@@ -34,19 +29,22 @@ function loginWithGoogle() {
     window.location.href = `${API_URL}/auth/google`;
 }
 
-// Auth Functions
 function showLogin() {
     document.getElementById('loginForm').style.display = 'flex';
     document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('loginForm').reset();
     document.querySelectorAll('.tab')[0].classList.add('active');
     document.querySelectorAll('.tab')[1].classList.remove('active');
+    clearMessage();
 }
 
 function showRegister() {
     document.getElementById('loginForm').style.display = 'none';
     document.getElementById('registerForm').style.display = 'flex';
+    document.getElementById('registerForm').reset();
     document.querySelectorAll('.tab')[0].classList.remove('active');
     document.querySelectorAll('.tab')[1].classList.add('active');
+    clearMessage();
 }
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -93,7 +91,9 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         
         if (res.ok) {
             showMessage('Registration successful! Please login.', 'success');
-            setTimeout(showLogin, 2000);
+            setTimeout(() => {
+                showLogin();
+            }, 2000);
         } else {
             showMessage(data.message, 'error');
         }
@@ -109,6 +109,7 @@ function logout() {
     document.getElementById('authSection').style.display = 'block';
     document.getElementById('mainSection').style.display = 'none';
     document.getElementById('navbar').style.display = 'none';
+    showLogin();
 }
 
 function showMainSection() {
@@ -133,6 +134,14 @@ function showMessage(msg, type) {
     const msgEl = document.getElementById('authMessage');
     msgEl.textContent = msg;
     msgEl.className = type;
+    msgEl.style.display = 'block';
+}
+
+function clearMessage() {
+    const msgEl = document.getElementById('authMessage');
+    msgEl.textContent = '';
+    msgEl.className = '';
+    msgEl.style.display = 'none';
 }
 
 function escapeHtml(value) {
@@ -147,14 +156,12 @@ function escapeHtml(value) {
 function populateCategorySelect(selectId, placeholder) {
     const select = document.getElementById(selectId);
     if (!select) return;
-
     select.innerHTML = [
         `<option value="">${escapeHtml(placeholder)}</option>`,
         ...COMPLAINT_CATEGORIES.map(category => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`)
     ].join('');
 }
 
-// Complaint Functions
 function showComplaintForm() {
     document.getElementById('complaintForm').style.display = 'block';
 }
@@ -188,11 +195,9 @@ document.getElementById('newComplaintForm').addEventListener('submit', async (e)
             hideComplaintForm();
             loadMyComplaints();
         } else {
-            console.error('Error response:', data);
             alert(data.message || data.errors?.[0]?.msg || 'Failed to submit complaint');
         }
     } catch (err) {
-        console.error('Submission error:', err);
         alert('Failed to submit complaint: ' + err.message);
     }
 });
@@ -205,19 +210,24 @@ async function loadMyComplaints() {
         const data = await res.json();
         
         const list = document.getElementById('complaintsList');
+        if (!data.complaints || data.complaints.length === 0) {
+            list.innerHTML = '<p>No complaints yet. Submit your first complaint!</p>';
+            return;
+        }
+        
         list.innerHTML = data.complaints.map(c => `
             <div class="complaint-card">
                 <div class="complaint-header">
                     <div>
-                        <h3>${c.title}</h3>
-                        <p>${c.description}</p>
+                        <h3>${escapeHtml(c.title)}</h3>
+                        <p>${escapeHtml(c.description)}</p>
                     </div>
                     <div>
-                        <span class="status ${c.status.replace(' ', '.')}">${c.status}</span>
-                        <span class="priority ${c.priority}">${c.priority}</span>
+                        <span class="status ${c.status.replace(/ /g, '.')}">${escapeHtml(c.status)}</span>
+                        <span class="priority ${c.priority}">${escapeHtml(c.priority)}</span>
                     </div>
                 </div>
-                <p><strong>Category:</strong> ${c.category}</p>
+                <p><strong>Category:</strong> ${escapeHtml(c.category)}</p>
                 <p><strong>Created:</strong> ${new Date(c.created_at).toLocaleString()}</p>
                 <button onclick="viewComplaint(${c.id})">View Details</button>
             </div>
@@ -229,55 +239,71 @@ async function loadMyComplaints() {
 
 async function viewComplaint(id) {
     try {
-        const [complaint, comments, history] = await Promise.all([
-            fetch(`${API_URL}/complaints/${id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }).then(r => r.json()),
-            fetch(`${API_URL}/complaints/${id}/comments`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }).then(r => r.json()),
-            fetch(`${API_URL}/complaints/${id}/history`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }).then(r => r.json())
+        const [complaintRes, commentsRes, historyRes] = await Promise.all([
+            fetch(`${API_URL}/complaints/${id}`, { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch(`${API_URL}/complaints/${id}/comments`, { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch(`${API_URL}/complaints/${id}/history`, { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
 
+        const complaint = await complaintRes.json();
+        const comments = await commentsRes.json();
+        const history = await historyRes.json();
+
+        const c = complaint.complaint;
+        const isAdmin = userRole === 'admin';
+        
         const modalBody = document.getElementById('modalBody');
         modalBody.innerHTML = `
-            <h2>${complaint.complaint.title}</h2>
-            <p>${complaint.complaint.description}</p>
-            <p><strong>Status:</strong> <span class="status ${complaint.complaint.status.replace(' ', '.')}">${complaint.complaint.status}</span></p>
-            <p><strong>Priority:</strong> <span class="priority ${complaint.complaint.priority}">${complaint.complaint.priority}</span></p>
-            <p><strong>Category:</strong> ${complaint.complaint.category}</p>
+            <h2>${escapeHtml(c.title)}</h2>
+            <p>${escapeHtml(c.description)}</p>
+            <p><strong>Status:</strong> <span class="status ${c.status.replace(/ /g, '.')}">${escapeHtml(c.status)}</span></p>
+            <p><strong>Priority:</strong> <span class="priority ${c.priority}">${escapeHtml(c.priority)}</span></p>
+            <p><strong>Category:</strong> ${escapeHtml(c.category)}</p>
+            <p><strong>Created:</strong> ${new Date(c.created_at).toLocaleString()}</p>
+            
+            ${isAdmin ? `
+                <div style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+                    <label><strong>Change Status:</strong></label>
+                    <select id="modalStatusSelect" style="padding: 0.5rem; margin: 0 0.5rem;">
+                        <option value="Pending" ${c.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="In Progress" ${c.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="Resolved" ${c.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                    </select>
+                    <button onclick="updateStatusFromModal(${id})">Update Status</button>
+                </div>
+            ` : ''}
             
             <h3>Comments</h3>
             <div id="commentsList">
-                ${comments.comments.map(c => `
+                ${comments.comments && comments.comments.length > 0 ? comments.comments.map(cm => `
                     <div class="comment">
-                        <strong>${c.user_name}</strong> - ${new Date(c.created_at).toLocaleString()}
-                        <p>${c.comment}</p>
+                        <strong>${escapeHtml(cm.user_name)}</strong> - ${new Date(cm.created_at).toLocaleString()}
+                        <p>${escapeHtml(cm.comment)}</p>
                     </div>
-                `).join('') || '<p>No comments yet</p>'}
+                `).join('') : '<p>No comments yet</p>'}
             </div>
             
-            <form id="addCommentForm">
-                <textarea id="newComment" placeholder="Add a comment" required></textarea>
-                <button type="submit">Add Comment</button>
+            <form id="addCommentForm" style="margin-top: 1rem;">
+                <textarea id="newComment" placeholder="Add a comment" required style="width: 100%; min-height: 80px; padding: 0.5rem;"></textarea>
+                <button type="submit" style="margin-top: 0.5rem;">Add Comment</button>
             </form>
 
             <h3>History</h3>
-            ${history.history.map(h => `
-                <div class="comment">
-                    <strong>${h.changed_by_name}</strong> changed <strong>${h.field_name}</strong> 
-                    from "${h.old_value}" to "${h.new_value}"
-                    <br><small>${new Date(h.changed_at).toLocaleString()}</small>
-                </div>
-            `).join('') || '<p>No history</p>'}
+            <div>
+                ${history.history && history.history.length > 0 ? history.history.map(h => `
+                    <div class="comment">
+                        <strong>${escapeHtml(h.changed_by_name)}</strong> changed <strong>${escapeHtml(h.field_name)}</strong> 
+                        from "${escapeHtml(h.old_value)}" to "${escapeHtml(h.new_value)}"
+                        <br><small>${new Date(h.changed_at).toLocaleString()}</small>
+                    </div>
+                `).join('') : '<p>No history</p>'}
+            </div>
         `;
 
         document.getElementById('addCommentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const comment = document.getElementById('newComment').value;
-            await fetch(`${API_URL}/complaints/${id}/comments`, {
+            const res = await fetch(`${API_URL}/complaints/${id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -285,16 +311,28 @@ async function viewComplaint(id) {
                 },
                 body: JSON.stringify({ comment })
             });
-            viewComplaint(id);
+            if (res.ok) {
+                viewComplaint(id);
+            }
         });
 
         document.getElementById('modal').style.display = 'flex';
     } catch (err) {
-        console.error(err);
+        console.error('View complaint error:', err);
+        alert('Failed to load complaint details');
     }
 }
 
-// Admin Functions
+async function updateStatusFromModal(id) {
+    const status = document.getElementById('modalStatusSelect').value;
+    await updateStatus(id, status);
+    closeModal();
+    if (userRole === 'admin') {
+        loadAdminStats();
+        loadAdminComplaints();
+    }
+}
+
 async function loadAdminStats() {
     try {
         const res = await fetch(`${API_URL}/admin/stats`, {
@@ -303,7 +341,7 @@ async function loadAdminStats() {
         const data = await res.json();
         
         document.getElementById('stats').innerHTML = `
-            <div class="stat-card"><h3>${data.stats.total}</h3><p>Total</p></div>
+            <div class="stat-card"><h3>${data.stats.total || 0}</h3><p>Total</p></div>
             <div class="stat-card"><h3>${data.stats.Pending || 0}</h3><p>Pending</p></div>
             <div class="stat-card"><h3>${data.stats['In Progress'] || 0}</h3><p>In Progress</p></div>
             <div class="stat-card"><h3>${data.stats.Resolved || 0}</h3><p>Resolved</p></div>
@@ -316,11 +354,15 @@ async function loadAdminStats() {
 async function loadAdminComplaints() {
     const status = document.getElementById('filterStatus').value;
     const category = document.getElementById('filterCategory').value;
+    const priority = document.getElementById('filterPriority').value;
+    const search = document.getElementById('searchInput').value;
     const list = document.getElementById('adminComplaintsList');
     const params = new URLSearchParams();
 
     if (status) params.set('status', status);
     if (category) params.set('category', category);
+    if (priority) params.set('priority', priority);
+    if (search) params.set('search', search);
 
     const url = `${API_URL}/admin/complaints${params.toString() ? `?${params.toString()}` : ''}`;
 
@@ -328,12 +370,14 @@ async function loadAdminComplaints() {
         const res = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        const data = await res.json();
-
+        
         if (!res.ok) {
-            list.innerHTML = `<div class="complaint-card"><p>${escapeHtml(data.message || 'Failed to load complaints')}</p></div>`;
+            const data = await res.json();
+            list.innerHTML = `<div class="complaint-card"><p>Error: ${escapeHtml(data.message || 'Failed to load complaints')}</p></div>`;
             return;
         }
+
+        const data = await res.json();
 
         if (!Array.isArray(data.complaints) || data.complaints.length === 0) {
             list.innerHTML = '<div class="complaint-card"><p>No complaints found.</p></div>';
@@ -349,25 +393,27 @@ async function loadAdminComplaints() {
                         <p><strong>User:</strong> ${escapeHtml(c.user_name)} (${escapeHtml(c.user_email)})</p>
                     </div>
                     <div>
-                        <span class="status ${escapeHtml(String(c.status).replace(/ /g, '.'))}">${escapeHtml(c.status)}</span>
-                        <span class="priority ${escapeHtml(c.priority)}">${escapeHtml(c.priority)}</span>
+                        <span class="status ${c.status.replace(/ /g, '.')}">${escapeHtml(c.status)}</span>
+                        <span class="priority ${c.priority}">${escapeHtml(c.priority)}</span>
                     </div>
                 </div>
                 <p><strong>Category:</strong> ${escapeHtml(c.category)}</p>
                 <p><strong>Created:</strong> ${new Date(c.created_at).toLocaleString()}</p>
-                <select onchange="updateStatus(${c.id}, this.value)">
-                    <option value="">Change Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Resolved">Resolved</option>
-                </select>
-                <button onclick="viewComplaint(${c.id})">View Details</button>
-                <button onclick="deleteComplaint(${c.id})" style="background: #e74c3c;">Delete</button>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <select onchange="updateStatus(${c.id}, this.value)" style="flex: 1;">
+                        <option value="">Change Status</option>
+                        <option value="Pending" ${c.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="In Progress" ${c.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="Resolved" ${c.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                    </select>
+                    <button onclick="viewComplaint(${c.id})">View Details</button>
+                    <button onclick="deleteComplaint(${c.id})" style="background: #e74c3c;">Delete</button>
+                </div>
             </div>
         `).join('');
     } catch (err) {
-        console.error(err);
-        list.innerHTML = '<div class="complaint-card"><p>Failed to load complaints.</p></div>';
+        console.error('Load complaints error:', err);
+        list.innerHTML = `<div class="complaint-card"><p>Error fetching complaints</p></div>`;
     }
 }
 
@@ -375,7 +421,7 @@ async function updateStatus(id, status) {
     if (!status) return;
     
     try {
-        await fetch(`${API_URL}/admin/complaints/${id}`, {
+        const res = await fetch(`${API_URL}/admin/complaints/${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -383,23 +429,31 @@ async function updateStatus(id, status) {
             },
             body: JSON.stringify({ status })
         });
-        loadAdminStats();
-        loadAdminComplaints();
+        if (res.ok) {
+            loadAdminStats();
+            loadAdminComplaints();
+        } else {
+            alert('Failed to update status');
+        }
     } catch (err) {
         alert('Failed to update status');
     }
 }
 
 async function deleteComplaint(id) {
-    if (!confirm('Delete this complaint?')) return;
+    if (!confirm('Are you sure you want to delete this complaint?')) return;
     
     try {
-        await fetch(`${API_URL}/admin/complaints/${id}`, {
+        const res = await fetch(`${API_URL}/admin/complaints/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        loadAdminStats();
-        loadAdminComplaints();
+        if (res.ok) {
+            loadAdminStats();
+            loadAdminComplaints();
+        } else {
+            alert('Failed to delete complaint');
+        }
     } catch (err) {
         alert('Failed to delete complaint');
     }
@@ -409,59 +463,32 @@ function closeModal() {
     document.getElementById('modal').style.display = 'none';
 }
 
+let searchTimeout;
+function handleSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        loadAdminComplaints();
+    }, 500);
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     populateCategorySelect('category', 'Select Category');
     populateCategorySelect('filterCategory', 'All Categories');
 
-    // Google Sign-In button
-    const googleSignInBtn = document.getElementById('googleSignInBtn');
-    if (googleSignInBtn) {
-        googleSignInBtn.addEventListener('click', loginWithGoogle);
-    }
-
-    // Logout button
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-
-    // Tab buttons
-    const loginTab = document.getElementById('loginTab');
-    const registerTab = document.getElementById('registerTab');
-    if (loginTab) loginTab.addEventListener('click', showLogin);
-    if (registerTab) registerTab.addEventListener('click', showRegister);
-
-    // New complaint button
-    const newComplaintBtn = document.getElementById('newComplaintBtn');
-    if (newComplaintBtn) {
-        newComplaintBtn.addEventListener('click', showComplaintForm);
-    }
-
-    // Cancel complaint button
-    const cancelComplaintBtn = document.getElementById('cancelComplaintBtn');
-    if (cancelComplaintBtn) {
-        cancelComplaintBtn.addEventListener('click', hideComplaintForm);
-    }
-
-    // Close modal button
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closeModal);
-    }
-
-    // Filter selects
-    const filterStatus = document.getElementById('filterStatus');
-    const filterCategory = document.getElementById('filterCategory');
-    if (filterStatus) {
-        filterStatus.addEventListener('change', loadAdminComplaints);
-    }
-    if (filterCategory) {
-        filterCategory.addEventListener('change', loadAdminComplaints);
-    }
+    document.getElementById('googleSignInBtn')?.addEventListener('click', loginWithGoogle);
+    document.getElementById('logoutBtn')?.addEventListener('click', logout);
+    document.getElementById('loginTab')?.addEventListener('click', showLogin);
+    document.getElementById('registerTab')?.addEventListener('click', showRegister);
+    document.getElementById('newComplaintBtn')?.addEventListener('click', showComplaintForm);
+    document.getElementById('cancelComplaintBtn')?.addEventListener('click', hideComplaintForm);
+    document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+    
+    document.getElementById('filterStatus')?.addEventListener('change', loadAdminComplaints);
+    document.getElementById('filterCategory')?.addEventListener('change', loadAdminComplaints);
+    document.getElementById('filterPriority')?.addEventListener('change', loadAdminComplaints);
 });
 
-// Initialize
 if (token) {
     showMainSection();
 }

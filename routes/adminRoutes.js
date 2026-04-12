@@ -8,7 +8,7 @@ const {
   updateComplaint,
   deleteComplaint,
   getStats
-} = require('../controllers/complaintController');
+} = require('../controllers/adminController');
 
 router.use(authMiddleware, adminMiddleware);
 

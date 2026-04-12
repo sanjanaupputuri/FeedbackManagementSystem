@@ -81,14 +81,21 @@
                 <div id="stats"></div>
                 
                 <div class="filters">
-                    <select id="filterStatus">
+                    <select id="filterStatus" onchange="loadAdminComplaints()">
                         <option value="">All Status</option>
                         <option value="Pending">Pending</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Resolved">Resolved</option>
                     </select>
-                    <select id="filterCategory">
+                    <select id="filterCategory" onchange="loadAdminComplaints()">
                     </select>
+                    <select id="filterPriority" onchange="loadAdminComplaints()">
+                        <option value="">All Priorities</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="Search complaints..." onkeyup="handleSearch()">
                 </div>
 
                 <div id="adminComplaintsList"></div>
