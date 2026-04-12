@@ -10,12 +10,33 @@ router.post('/login', validateLogin, handleValidationErrors, login);
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', 
-  passport.authenticate('google', { session: false, failureRedirect: '/' }),
-  (req, res) => {
-    const token = generateToken(req.user.id, req.user.role);
-    res.redirect(`/?token=${token}&name=${encodeURIComponent(req.user.name)}&role=${req.user.role}`);
-  }
-);
+router.get('/google/callback', (req, res, next) => {
+  passport.authenticate('google', { session: false }, (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+
+    if (!user) {
+      const params = new URLSearchParams({
+        authError: info?.message || 'Google sign-in failed'
+      });
+
+      if (info?.email) {
+        params.set('email', info.email);
+      }
+
+      return res.redirect(`/?${params.toString()}`);
+    }
+
+    const token = generateToken(user.id, user.role);
+    const params = new URLSearchParams({
+      token,
+      name: user.name,
+      role: user.role
+    });
+
+    return res.redirect(`/?${params.toString()}`);
+  })(req, res, next);
+});
 
 module.exports = router;

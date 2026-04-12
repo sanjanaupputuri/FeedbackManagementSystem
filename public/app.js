@@ -1,4 +1,5 @@
 const API_URL = 'http://localhost:3000/api';
+const COMPLAINT_CATEGORIES = ['Electrical', 'Network', 'Maintenance', 'Others'];
 let token = localStorage.getItem('token');
 let userRole = localStorage.getItem('role');
 
@@ -12,6 +13,21 @@ if (urlParams.has('token')) {
     localStorage.setItem('userName', urlParams.get('name'));
     window.history.replaceState({}, document.title, '/');
     showMainSection();
+}
+
+if (urlParams.has('authError')) {
+    const email = urlParams.get('email');
+
+    window.history.replaceState({}, document.title, '/');
+    showRegister();
+    showMessage(urlParams.get('authError'), 'error');
+
+    if (email) {
+        const registerEmailInput = document.getElementById('regEmail');
+        if (registerEmailInput) {
+            registerEmailInput.value = email;
+        }
+    }
 }
 
 function loginWithGoogle() {
@@ -117,6 +133,25 @@ function showMessage(msg, type) {
     const msgEl = document.getElementById('authMessage');
     msgEl.textContent = msg;
     msgEl.className = type;
+}
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function populateCategorySelect(selectId, placeholder) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    select.innerHTML = [
+        `<option value="">${escapeHtml(placeholder)}</option>`,
+        ...COMPLAINT_CATEGORIES.map(category => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`)
+    ].join('');
 }
 
 // Complaint Functions
@@ -281,39 +316,50 @@ async function loadAdminStats() {
 async function loadAdminComplaints() {
     const status = document.getElementById('filterStatus').value;
     const category = document.getElementById('filterCategory').value;
-    
-    let url = `${API_URL}/admin/complaints?`;
-    if (status) url += `status=${status}&`;
-    if (category) url += `category=${category}&`;
+    const list = document.getElementById('adminComplaintsList');
+    const params = new URLSearchParams();
+
+    if (status) params.set('status', status);
+    if (category) params.set('category', category);
+
+    const url = `${API_URL}/admin/complaints${params.toString() ? `?${params.toString()}` : ''}`;
 
     try {
         const res = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
-        
-        const list = document.getElementById('adminComplaintsList');
+
+        if (!res.ok) {
+            list.innerHTML = `<div class="complaint-card"><p>${escapeHtml(data.message || 'Failed to load complaints')}</p></div>`;
+            return;
+        }
+
+        if (!Array.isArray(data.complaints) || data.complaints.length === 0) {
+            list.innerHTML = '<div class="complaint-card"><p>No complaints found.</p></div>';
+            return;
+        }
+
         list.innerHTML = data.complaints.map(c => `
             <div class="complaint-card">
                 <div class="complaint-header">
                     <div>
-                        <h3>${c.title}</h3>
-                        <p>${c.description}</p>
-                        <p><strong>User:</strong> ${c.user_name} (${c.user_email})</p>
+                        <h3>${escapeHtml(c.title)}</h3>
+                        <p>${escapeHtml(c.description)}</p>
+                        <p><strong>User:</strong> ${escapeHtml(c.user_name)} (${escapeHtml(c.user_email)})</p>
                     </div>
                     <div>
-                        <span class="status ${c.status.replace(' ', '.')}">${c.status}</span>
-                        <span class="priority ${c.priority}">${c.priority}</span>
+                        <span class="status ${escapeHtml(String(c.status).replace(/ /g, '.'))}">${escapeHtml(c.status)}</span>
+                        <span class="priority ${escapeHtml(c.priority)}">${escapeHtml(c.priority)}</span>
                     </div>
                 </div>
-                <p><strong>Category:</strong> ${c.category}</p>
+                <p><strong>Category:</strong> ${escapeHtml(c.category)}</p>
                 <p><strong>Created:</strong> ${new Date(c.created_at).toLocaleString()}</p>
                 <select onchange="updateStatus(${c.id}, this.value)">
                     <option value="">Change Status</option>
                     <option value="Pending">Pending</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Resolved">Resolved</option>
-                    <option value="Closed">Closed</option>
                 </select>
                 <button onclick="viewComplaint(${c.id})">View Details</button>
                 <button onclick="deleteComplaint(${c.id})" style="background: #e74c3c;">Delete</button>
@@ -321,6 +367,7 @@ async function loadAdminComplaints() {
         `).join('');
     } catch (err) {
         console.error(err);
+        list.innerHTML = '<div class="complaint-card"><p>Failed to load complaints.</p></div>';
     }
 }
 
@@ -364,6 +411,9 @@ function closeModal() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    populateCategorySelect('category', 'Select Category');
+    populateCategorySelect('filterCategory', 'All Categories');
+
     // Google Sign-In button
     const googleSignInBtn = document.getElementById('googleSignInBtn');
     if (googleSignInBtn) {
