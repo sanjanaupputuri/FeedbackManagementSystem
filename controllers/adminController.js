@@ -7,9 +7,9 @@ exports.getAllComplaints = async (req, res) => {
     console.log('Admin complaints request:', { page, limit, status, category, priority, search });
 
     const filters = {};
-    if (status) filters.status = status;
-    if (category) filters.category = category;
-    if (priority) filters.priority = priority;
+    if (status && status !== 'All') filters.status = status;
+    if (category && category !== 'All') filters.category = category;
+    if (priority && priority !== 'All') filters.priority = priority;
 
     const result = await Complaint.findAllPaginated(parseInt(page), parseInt(limit), filters);
     console.log('Query result:', { complaintsCount: result.complaints.length, total: result.total });
