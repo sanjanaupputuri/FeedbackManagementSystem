@@ -69,9 +69,6 @@ const Landing = () => {
                 <Link to="/register" className="btn btn-primary btn-lg">
                   Get Started <i className="bi bi-arrow-right ms-2"></i>
                 </Link>
-                <Link to="/about" className="btn btn-outline-secondary btn-lg">
-                  Learn More
-                </Link>
               </div>
             </div>
           </div>
