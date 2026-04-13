@@ -71,20 +71,6 @@ const Footer = () => {
                 Mon - Fri: 9AM - 5PM
               </li>
             </ul>
-            <div className="mt-3">
-              <button type="button" className="footer-social me-3 btn btn-link">
-                <i className="bi bi-facebook"></i>
-              </button>
-              <button type="button" className="footer-social me-3 btn btn-link">
-                <i className="bi bi-twitter-x"></i>
-              </button>
-              <button type="button" className="footer-social me-3 btn btn-link">
-                <i className="bi bi-linkedin"></i>
-              </button>
-              <button type="button" className="footer-social btn btn-link">
-                <i className="bi bi-github"></i>
-              </button>
-            </div>
           </div>
         </div>
 
@@ -99,7 +85,6 @@ const Footer = () => {
           <div className="col-md-6 text-center text-md-end">
             <Link to="/about" className="footer-link small me-3">About</Link>
             <Link to="/contact" className="footer-link small me-3">Contact</Link>
-            <Link to="/privacy" className="footer-link small">Privacy</Link>
           </div>
         </div>
       </div>

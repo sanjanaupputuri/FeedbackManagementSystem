@@ -117,8 +117,9 @@ const Register = () => {
                       >
                         <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                       </button>
-                      {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+
                     </div>
+                    {errors.password && <div className="text-danger small mt-1">{errors.password}</div>}
                     {formData.password && (
                       <div className="mt-2">
                         <div className="progress" style={{ height: '5px' }}>

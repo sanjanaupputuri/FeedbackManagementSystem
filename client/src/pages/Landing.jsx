@@ -10,10 +10,7 @@ const Landing = () => {
   const features = [
     { icon: 'bi-briefcase-fill', title: 'Submit Easily', desc: 'File complaints with detailed information and attachments' },
     { icon: 'bi-graph-up', title: 'Track Status', desc: 'Monitor your complaint status in real-time' },
-    { icon: 'bi-shield-check', title: 'Secure Auth', desc: 'Your data is protected with JWT authentication' },
-    { icon: 'bi-bar-chart-line', title: 'Analytics', desc: 'Admins get powerful analytics and reports' },
-    { icon: 'bi-phone-fill', title: 'Responsive', desc: 'Access from any device - mobile or desktop' },
-    { icon: 'bi-chat-dots', title: 'Communicate', desc: 'Add comments and collaborate on solutions' }
+    { icon: 'bi-bar-chart-line', title: 'Analytics', desc: 'Admins get powerful analytics and reports' }
   ];
 
   const categories = [
@@ -75,25 +72,6 @@ const Landing = () => {
                 <Link to="/about" className="btn btn-outline-secondary btn-lg">
                   Learn More
                 </Link>
-              </div>
-            </div>
-            <div className="col-lg-6 mt-5 mt-lg-0">
-              <div className="hero-card bg-white p-4 rounded-3 shadow">
-                <h4 className="mb-4">Quick Stats</h4>
-                <div className="row g-3">
-                  <div className="col-6">
-                    <div className="stat-box text-center p-3 rounded">
-                      <h2 className="text-primary mb-0">500+</h2>
-                      <small className="text-muted">Active Users</small>
-                    </div>
-                  </div>
-                  <div className="col-6">
-                    <div className="stat-box text-center p-3 rounded">
-                      <h2 className="text-success mb-0">1200+</h2>
-                      <small className="text-muted">Resolved</small>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
