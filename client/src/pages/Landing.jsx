@@ -141,22 +141,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="cta-section py-5">
-        <div className="container text-center">
-          <h2 className="mb-3">Ready to get started?</h2>
-          <p className="mb-4">Join thousands of users managing their complaints efficiently</p>
-          <div className="d-flex justify-content-center gap-3">
-            <Link to="/register" className="btn btn-light btn-lg">
-              Register Now <i className="bi bi-arrow-right ms-2"></i>
-            </Link>
-            <Link to="/contact" className="btn btn-outline-light btn-lg">
-              Contact Us
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <Footer />
     </div>
   );

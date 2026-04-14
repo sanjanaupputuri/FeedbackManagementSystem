@@ -95,15 +95,6 @@ const Navbar = () => {
                       <i className="bi bi-person me-2"></i> My Profile
                     </Link>
                   </li>
-                  <li>
-                    <Link 
-                      to={isAdmin ? "/admin" : "/dashboard"} 
-                      className="dropdown-item"
-                      onClick={() => { setShowDropdown(false); setMobileMenuOpen(false); }}
-                    >
-                      <i className="bi bi-house me-2"></i> Dashboard
-                    </Link>
-                  </li>
                   <li><hr className="dropdown-divider" /></li>
                   <li>
                     <button 

@@ -203,10 +203,6 @@ const Contact = () => {
                     <i className="bi bi-question-circle text-primary"></i>
                     <span>Account deleted - Re-register</span>
                   </div>
-                  <div className="common-issue">
-                    <i className="bi bi-question-circle text-primary"></i>
-                    <span>Technical bug - Use Bug Report</span>
-                  </div>
                 </div>
               </div>
             </div>
