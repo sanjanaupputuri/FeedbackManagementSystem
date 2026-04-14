@@ -7,13 +7,15 @@ const {
   getAllComplaints,
   updateComplaint,
   deleteComplaint,
-  getStats
+  getStats,
+  getCategoryStats
 } = require('../controllers/adminController');
 
 router.use(authMiddleware, adminMiddleware);
 
 router.get('/complaints', getAllComplaints);
 router.get('/stats', getStats);
+router.get('/category-stats', getCategoryStats);
 router.put('/complaints/:id', validateComplaintUpdate, handleValidationErrors, updateComplaint);
 router.delete('/complaints/:id', deleteComplaint);
 

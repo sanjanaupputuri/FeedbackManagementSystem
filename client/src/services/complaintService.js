@@ -19,6 +19,11 @@ export const complaintService = {
     return response.data;
   },
 
+  getUserStats: async () => {
+    const response = await api.get('/complaints/stats');
+    return response.data;
+  },
+
   getRecent: async (limit = 5) => {
     const response = await api.get('/complaints/recent', { params: { limit } });
     return response.data;
@@ -53,6 +58,11 @@ export const adminService = {
 
   getStats: async () => {
     const response = await api.get('/admin/stats');
+    return response.data;
+  },
+
+  getCategoryStats: async () => {
+    const response = await api.get('/admin/category-stats');
     return response.data;
   },
 

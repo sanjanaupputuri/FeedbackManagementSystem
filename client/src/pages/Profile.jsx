@@ -13,7 +13,7 @@ const Profile = () => {
     const fetchStats = async () => {
       try {
         const response = await complaintService.getUserStats();
-        setStats(response.data.stats);
+        setStats(response.stats);
       } catch (error) {
         console.error('Error fetching stats:', error);
       }

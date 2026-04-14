@@ -25,12 +25,13 @@ const AdminComplaintDetail = () => {
 
   useEffect(() => {
     fetchComplaintData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchComplaintData = async () => {
     try {
       const complaintData = await adminService.getAll({ id });
-      const complaintArr = complaintData.complaints?.filter(c => c.id == id) || [];
+      const complaintArr = complaintData.complaints?.filter(c => c.id === id) || [];
       
       if (complaintArr.length > 0) {
         setComplaint(complaintArr[0]);
@@ -80,15 +81,6 @@ const AdminComplaintDetail = () => {
       case 'Pending': return 'status-pending';
       case 'In Progress': return 'status-in-progress';
       case 'Resolved': return 'status-resolved';
-      default: return '';
-    }
-  };
-
-  const getPriorityClass = (priority) => {
-    switch (priority) {
-      case 'High': return 'priority-high';
-      case 'Medium': return 'priority-medium';
-      case 'Low': return 'priority-low';
       default: return '';
     }
   };

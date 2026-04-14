@@ -29,6 +29,7 @@ const ComplaintDetail = () => {
 
   useEffect(() => {
     fetchComplaintData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchComplaintData = async () => {

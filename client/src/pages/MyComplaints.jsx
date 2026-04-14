@@ -23,7 +23,16 @@ const MyComplaints = () => {
 
   useEffect(() => {
     fetchComplaints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.status, filters.category]);
+
+  // Fetch fresh data when search is cleared
+  useEffect(() => {
+    if (filters.search === '') {
+      fetchComplaints();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.search]);
 
   const fetchComplaints = async () => {
     setLoading(true);
@@ -31,6 +40,7 @@ const MyComplaints = () => {
       const params = {};
       if (filters.status !== 'All') params.status = filters.status;
       if (filters.category !== 'All') params.category = filters.category;
+      if (filters.search) params.search = filters.search;
       
       const data = await complaintService.getMine(params);
       setComplaints(data.complaints || []);
@@ -53,11 +63,7 @@ const MyComplaints = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const filtered = complaints.filter(c => 
-      c.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-      c.description.toLowerCase().includes(filters.search.toLowerCase())
-    );
-    setComplaints(filtered);
+    fetchComplaints();
   };
 
   return (
@@ -93,6 +99,7 @@ const MyComplaints = () => {
                         placeholder="Search complaints..."
                         value={filters.search}
                         onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                        onKeyDown={(e) => e.key === 'Enter' && fetchComplaints()}
                       />
                     </div>
                   </form>
@@ -189,7 +196,7 @@ const MyComplaints = () => {
                               </span>
                             </td>
                             <td>
-                              <span className={`badge status-${complaint.status.toLowerCaseCase?.().replace(' ', '-')}`}>
+                              <span className={`badge status-${complaint.status.toLowerCase().replace(' ', '-')}`}>
                                 {complaint.status}
                               </span>
                             </td>

@@ -5,13 +5,13 @@
   --secondary: #7C3AED;
   --accent: #F59E0B;
   
-  --status-pending: #F59E0B;
-  --status-inprogress: #3B82F6;
-  --status-resolved: #10B981;
+  --status-pending: #B45309;
+  --status-inprogress: #1D4ED8;
+  --status-resolved: #047857;
   
-  --priority-high: #EF4444;
-  --priority-medium: #F59E0B;
-  --priority-low: #6B7280;
+  --priority-high: #B91C1C;
+  --priority-medium: #B45309;
+  --priority-low: #374151;
   
   --bg-base: #F8FAFC;
   --bg-surface: #FFFFFF;

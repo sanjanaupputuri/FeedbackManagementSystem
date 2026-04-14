@@ -8,6 +8,7 @@ ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tool
 
 const AdminAnalytics = () => {
   const [stats, setStats] = useState({ total: 0, Pending: 0, 'In Progress': 0, Resolved: 0 });
+  const [categoryStats, setCategoryStats] = useState({ Electrical: 0, Network: 0, Maintenance: 0, Others: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,8 +17,12 @@ const AdminAnalytics = () => {
 
   const fetchStats = async () => {
     try {
-      const data = await adminService.getStats();
-      setStats(data.stats);
+      const [statsData, categoryData] = await Promise.all([
+        adminService.getStats(),
+        adminService.getCategoryStats()
+      ]);
+      setStats(statsData.stats);
+      setCategoryStats(categoryData.stats);
     } catch (error) {
       console.error('Error fetching stats:', error);
     } finally {
@@ -38,7 +43,7 @@ const AdminAnalytics = () => {
     labels: ['Electrical', 'Network', 'Maintenance', 'Others'],
     datasets: [{
       label: 'Complaints by Category',
-      data: [15, 25, 10, 5],
+      data: [categoryStats.Electrical, categoryStats.Network, categoryStats.Maintenance, categoryStats.Others],
       backgroundColor: ['#F59E0B', '#3B82F6', '#10B981', '#6B7280']
     }]
   };

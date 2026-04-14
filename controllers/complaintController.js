@@ -16,7 +16,11 @@ exports.createComplaint = async (req, res) => {
 
 exports.getMyComplaints = async (req, res) => {
   try {
-    const complaints = await Complaint.findByUserId(req.user.id);
+    const filters = {
+      status: req.query.status,
+      category: req.query.category
+    };
+    const complaints = await Complaint.findByUserId(req.user.id, filters);
     res.json({ complaints });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

@@ -9,10 +9,28 @@ class Complaint {
     return result.insertId;
   }
 
-  static async findByUserId(userId) {
+  static async findByUserId(userId, filters = {}) {
+    const whereClauses = ['user_id = ?'];
+    const params = [userId];
+
+    if (filters.status && filters.status !== 'All') {
+      whereClauses.push('status = ?');
+      params.push(filters.status);
+    }
+    if (filters.category && filters.category !== 'All') {
+      whereClauses.push('category = ?');
+      params.push(filters.category);
+    }
+    if (filters.search) {
+      whereClauses.push('(title LIKE ? OR description LIKE ?)');
+      const searchTerm = `%${filters.search}%`;
+      params.push(searchTerm, searchTerm);
+    }
+
+    const whereSql = 'WHERE ' + whereClauses.join(' AND ');
     const [rows] = await db.execute(
-      'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC',
-      [userId]
+      'SELECT * FROM complaints ' + whereSql + ' ORDER BY created_at DESC',
+      params
     );
     return rows;
   }
@@ -83,6 +101,17 @@ static async findAllPaginated(page = 1, limit = 20, filters = {}) {
       'SELECT status, COUNT(*) as count FROM complaints GROUP BY status'
     );
     return rows;
+  }
+
+  static async getCategoryStats() {
+    const [rows] = await db.execute(
+      'SELECT category, COUNT(*) as count FROM complaints GROUP BY category'
+    );
+    const stats = { Electrical: 0, Network: 0, Maintenance: 0, Others: 0 };
+    rows.forEach(row => {
+      stats[row.category] = row.count;
+    });
+    return stats;
   }
 
   static async getUserStats(userId) {

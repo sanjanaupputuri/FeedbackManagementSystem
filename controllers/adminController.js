@@ -95,3 +95,13 @@ exports.getStats = async (req, res) => {
     res.status(500).json({ message: 'Error fetching statistics' });
   }
 };
+
+exports.getCategoryStats = async (req, res) => {
+  try {
+    const categoryStats = await Complaint.getCategoryStats();
+    res.json({ stats: categoryStats });
+  } catch (error) {
+    logger.error('Get category stats error:', error);
+    res.status(500).json({ message: 'Error fetching category statistics' });
+  }
+};
