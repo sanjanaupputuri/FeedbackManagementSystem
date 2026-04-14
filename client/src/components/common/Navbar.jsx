@@ -40,33 +40,6 @@ const Navbar = () => {
               <ul className="navbar-nav ms-auto me-4">
                 {isAdmin ? (
                   <>
-                    <li className="nav-item">
-                      <Link 
-                        to="/admin" 
-                        className={`nav-link ${isActive('/admin') ? 'active' : ''}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <i className="bi bi-speedometer2 me-1"></i> Dashboard
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link 
-                        to="/admin/complaints" 
-                        className={`nav-link ${isActive('/admin/complaints') ? 'active' : ''}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <i className="bi bi-journal-text me-1"></i> Complaints
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link 
-                        to="/admin/analytics" 
-                        className={`nav-link ${isActive('/admin/analytics') ? 'active' : ''}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <i className="bi bi-bar-chart-line me-1"></i> Analytics
-                      </Link>
-                    </li>
                   </>
                 ) : (
                   <>

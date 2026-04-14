@@ -40,13 +40,6 @@ const Sidebar = ({ collapsed, onToggle }) => {
           </Link>
         ))}
       </nav>
-
-      <div className="sidebar-footer">
-        <Link to="/dashboard" className="nav-item">
-          <i className="bi bi-arrow-left-circle"></i>
-          {!collapsed && <span>User View</span>}
-        </Link>
-      </div>
     </aside>
   );
 };

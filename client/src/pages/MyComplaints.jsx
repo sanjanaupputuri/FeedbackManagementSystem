@@ -88,19 +88,18 @@ const MyComplaints = () => {
             <div className="card-body">
               <div className="row g-3 align-items-center">
                 <div className="col-md-4">
-                  <form onSubmit={handleSearch}>
+                  <form onSubmit={(e) => { e.preventDefault(); fetchComplaints(); }}>
                     <div className="input-group">
-                      <span className="input-group-text bg-white">
-                        <i className="bi bi-search"></i>
-                      </span>
                       <input
                         type="text"
                         className="form-control"
                         placeholder="Search complaints..."
                         value={filters.search}
                         onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                        onKeyDown={(e) => e.key === 'Enter' && fetchComplaints()}
                       />
+                      <button type="submit" className="btn btn-outline-primary">
+                        <i className="bi bi-search"></i>
+                      </button>
                     </div>
                   </form>
                 </div>

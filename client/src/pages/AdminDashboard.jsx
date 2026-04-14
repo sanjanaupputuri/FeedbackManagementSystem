@@ -103,6 +103,7 @@ const AdminDashboard = () => {
                   <tr>
                     <th>ID</th>
                     <th>Title</th>
+                    <th>Description</th>
                     <th>User</th>
                     <th>Category</th>
                     <th>Priority</th>
@@ -119,6 +120,9 @@ const AdminDashboard = () => {
                         <Link to={`/admin/complaints/${complaint.id}`} className="text-decoration-none">
                           {complaint.title}
                         </Link>
+                      </td>
+                      <td className="text-muted" style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {complaint.description?.substring(0, 50)}{complaint.description?.length > 50 && '...'}
                       </td>
                       <td>{complaint.user_name}</td>
                       <td>{complaint.category}</td>

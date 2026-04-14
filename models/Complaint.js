@@ -36,7 +36,10 @@ class Complaint {
   }
 
   static async findById(id) {
-    const [rows] = await db.execute('SELECT * FROM complaints WHERE id = ?', [id]);
+    const [rows] = await db.execute(
+      'SELECT c.*, u.name as user_name, u.email as user_email FROM complaints c JOIN users u ON c.user_id = u.id WHERE c.id = ?',
+      [id]
+    );
     return rows[0];
   }
 
@@ -63,6 +66,11 @@ static async findAllPaginated(page = 1, limit = 20, filters = {}) {
     if (filters.priority && filters.priority !== 'All') {
       whereClauses.push('c.priority = ?');
       params.push(filters.priority);
+    }
+    if (filters.search) {
+      whereClauses.push('(c.title LIKE ? OR c.description LIKE ?)');
+      const searchTerm = `%${filters.search}%`;
+      params.push(searchTerm, searchTerm);
     }
 
     const whereSql = ` WHERE ${whereClauses.join(' AND ')}`;

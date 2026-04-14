@@ -105,3 +105,16 @@ exports.getCategoryStats = async (req, res) => {
     res.status(500).json({ message: 'Error fetching category statistics' });
   }
 };
+
+exports.getComplaintById = async (req, res) => {
+  try {
+    const complaint = await Complaint.findById(req.params.id);
+    if (!complaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+    res.json({ complaint });
+  } catch (error) {
+    logger.error('Get complaint by id error:', error);
+    res.status(500).json({ message: 'Error fetching complaint' });
+  }
+};

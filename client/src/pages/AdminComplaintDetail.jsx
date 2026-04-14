@@ -30,14 +30,13 @@ const AdminComplaintDetail = () => {
 
   const fetchComplaintData = async () => {
     try {
-      const complaintData = await adminService.getAll({ id });
-      const complaintArr = complaintData.complaints?.filter(c => c.id === id) || [];
+      const complaintData = await adminService.getComplaintById(id);
       
-      if (complaintArr.length > 0) {
-        setComplaint(complaintArr[0]);
+      if (complaintData.complaint) {
+        setComplaint(complaintData.complaint);
         setFormData({
-          status: complaintArr[0].status,
-          priority: complaintArr[0].priority
+          status: complaintData.complaint.status,
+          priority: complaintData.complaint.priority
         });
       }
       

@@ -25,6 +25,13 @@ const AdminComplaints = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.status, filters.category, filters.priority, pagination.page]);
 
+  useEffect(() => {
+    if (filters.search === '') {
+      fetchComplaints();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.search]);
+
   const fetchComplaints = async () => {
     setLoading(true);
     try {
@@ -32,6 +39,7 @@ const AdminComplaints = () => {
       if (filters.status !== 'All') params.status = filters.status;
       if (filters.category !== 'All') params.category = filters.category;
       if (filters.priority !== 'All') params.priority = filters.priority;
+      if (filters.search) params.search = filters.search;
       
       const data = await adminService.getAll(params);
       setComplaints(data.complaints || []);
@@ -92,7 +100,7 @@ const AdminComplaints = () => {
                 ))}
               </select>
             </div>
-            <div className="col-md-3">
+<div className="col-md-3">
               <select
                 className="form-select"
                 value={filters.priority}
@@ -103,13 +111,30 @@ const AdminComplaints = () => {
                 ))}
               </select>
             </div>
-            <div className="col-md-3 text-end">
-              <small className="text-muted">
-                Showing {complaints.length} of {pagination.total}
-              </small>
+            <div className="col-md-3">
+              <form onSubmit={(e) => { e.preventDefault(); fetchComplaints(); }}>
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search..."
+                    value={filters.search}
+                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                  />
+                  <button type="submit" className="btn btn-outline-primary">
+                    <i className="bi bi-search"></i>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="d-flex justify-content-end mb-3">
+        <small className="text-muted">
+          Showing {complaints.length} of {pagination.total}
+        </small>
       </div>
 
       {/* Table */}
@@ -126,6 +151,7 @@ const AdminComplaints = () => {
                   <tr>
                     <th>ID</th>
                     <th>Title</th>
+                    <th>Description</th>
                     <th>User</th>
                     <th>Category</th>
                     <th>Priority</th>
@@ -143,6 +169,9 @@ const AdminComplaints = () => {
                           {complaint.title?.substring(0, 40)}
                           {complaint.title?.length > 40 && '...'}
                         </Link>
+                      </td>
+                      <td className="text-muted" style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {complaint.description?.substring(0, 30)}{complaint.description?.length > 30 && '...'}
                       </td>
                       <td>
                         <div>{complaint.user_name}</div>

@@ -66,6 +66,11 @@ export const adminService = {
     return response.data;
   },
 
+  getComplaintById: async (id) => {
+    const response = await api.get(`/admin/complaints/${id}`);
+    return response.data;
+  },
+
   update: async (id, data) => {
     const response = await api.put(`/admin/complaints/${id}`, data);
     return response.data;
