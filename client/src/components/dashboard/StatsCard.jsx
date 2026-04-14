@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './StatsCard.css';
 
@@ -11,29 +11,6 @@ const StatsCard = ({
   link = null,
   loading = false
 }) => {
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    if (loading || !value) return;
-    
-    const duration = 1500;
-    const steps = 60;
-    const increment = value / steps;
-    let current = 0;
-    
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= value) {
-        setDisplayValue(value);
-        clearInterval(timer);
-      } else {
-        setDisplayValue(Math.floor(current));
-      }
-    }, duration / steps);
-
-    return () => clearInterval(timer);
-  }, [value, loading]);
-
   const colorClass = `stats-card-${color}`;
 
   const cardContent = (
@@ -46,7 +23,7 @@ const StatsCard = ({
               {loading ? (
                 <span className="skeleton-loader d-inline-block" style={{width: '60px', height: '32px'}}></span>
               ) : (
-                displayValue
+                value
               )}
             </h2>
             {trend && (

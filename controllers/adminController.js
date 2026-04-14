@@ -1,4 +1,5 @@
 const Complaint = require('../models/Complaint');
+const History = require('../models/History');
 const logger = require('../utils/logger');
 
 exports.getAllComplaints = async (req, res) => {
@@ -54,7 +55,18 @@ exports.updateComplaint = async (req, res) => {
       return res.status(404).json({ message: 'Complaint not found' });
     }
 
-    await Complaint.update(id, status || complaint.status, priority || complaint.priority);
+    const newStatus = status || complaint.status;
+    const newPriority = priority || complaint.priority;
+
+    await Complaint.update(id, newStatus, newPriority);
+
+    if (status && status !== complaint.status) {
+      await History.create(id, adminId, 'status', complaint.status, status);
+    }
+    if (priority && priority !== complaint.priority) {
+      await History.create(id, adminId, 'priority', complaint.priority, priority);
+    }
+
     res.json({ message: 'Complaint updated successfully' });
   } catch (error) {
     logger.error('Update complaint error:', error);

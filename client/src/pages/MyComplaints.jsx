@@ -17,22 +17,13 @@ const MyComplaints = () => {
 
   const [filters, setFilters] = useState({
     status: searchParams.get('status') || 'All',
-    category: searchParams.get('category') || 'All',
-    search: searchParams.get('search') || ''
+    category: searchParams.get('category') || 'All'
   });
 
   useEffect(() => {
     fetchComplaints();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.status, filters.category]);
-
-  // Fetch fresh data when search is cleared
-  useEffect(() => {
-    if (filters.search === '') {
-      fetchComplaints();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.search]);
+  }, [filters.status, filters.category, filters.search]);
 
   const fetchComplaints = async () => {
     setLoading(true);
@@ -87,22 +78,6 @@ const MyComplaints = () => {
           <div className="card border-0 shadow-sm mb-4">
             <div className="card-body">
               <div className="row g-3 align-items-center">
-                <div className="col-md-4">
-                  <form onSubmit={(e) => { e.preventDefault(); fetchComplaints(); }}>
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search complaints..."
-                        value={filters.search}
-                        onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                      />
-                      <button type="submit" className="btn btn-outline-primary">
-                        <i className="bi bi-search"></i>
-                      </button>
-                    </div>
-                  </form>
-                </div>
                 <div className="col-md-2">
                   <select
                     className="form-select"
