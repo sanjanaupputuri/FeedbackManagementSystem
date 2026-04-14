@@ -151,32 +151,23 @@ const AdminComplaints = () => {
                   <tr>
                     <th>ID</th>
                     <th>Title</th>
-                    <th>Description</th>
                     <th>User</th>
                     <th>Category</th>
                     <th>Priority</th>
                     <th>Status</th>
-                    <th>Date</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {complaints.map(complaint => (
                     <tr key={complaint.id}>
-                      <td>#{complaint.id}</td>
+                      <td>{complaint.id}</td>
                       <td>
                         <Link to={`/admin/complaints/${complaint.id}`} className="text-decoration-none fw-medium">
-                          {complaint.title?.substring(0, 40)}
-                          {complaint.title?.length > 40 && '...'}
+                          {complaint.title}
                         </Link>
                       </td>
-                      <td className="text-muted" style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {complaint.description?.substring(0, 30)}{complaint.description?.length > 30 && '...'}
-                      </td>
-                      <td>
-                        <div>{complaint.user_name}</div>
-                        <small className="text-muted">{complaint.user_email}</small>
-                      </td>
+                      <td>{complaint.user_name}</td>
                       <td>{complaint.category}</td>
                       <td>
                         <span className={`badge priority-${complaint.priority.toLowerCase()}`}>
@@ -188,7 +179,6 @@ const AdminComplaints = () => {
                           {complaint.status}
                         </span>
                       </td>
-                      <td>{new Date(complaint.created_at).toLocaleDateString()}</td>
                       <td>
                         <Link to={`/admin/complaints/${complaint.id}`} className="btn btn-sm btn-outline-primary">
                           View

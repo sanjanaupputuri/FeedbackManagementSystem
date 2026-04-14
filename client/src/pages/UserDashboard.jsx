@@ -176,7 +176,7 @@ const UserDashboard = () => {
                       </div>
                       <div>
                         <div className="fw-medium">My Profile</div>
-                        <small className="text-muted">Update your info</small>
+                        <small className="text-muted">Know your information</small>
                       </div>
                     </Link>
                   </div>
